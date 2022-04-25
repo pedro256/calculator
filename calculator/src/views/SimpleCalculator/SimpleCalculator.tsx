@@ -18,10 +18,23 @@ export default function SimpleCalculator() {
         if (
             isCaracterValid(value) &&
             isCaracterValidInExpression(value)
-            ) {
+        ) {
             setIntoExpression(value)
         }
     }
+
+    function isOperator(value: string): boolean {
+        if (
+            value === '+'
+            || value === '*'
+            || value === '/'
+            || value === '-'
+        ) {
+            return true;
+        }
+        return false;
+    }
+
     function isCaracterValid(value: string): boolean {
         const valueNumeric = Number.parseInt(value)
         if (
@@ -38,7 +51,9 @@ export default function SimpleCalculator() {
                 value === '-' ||
                 value === '/' ||
                 value === '(' ||
-                value === ')'
+                value === ')' ||
+                value === 'sup2' ||
+                value === 'sup3'
             ) {
                 return true
             }
@@ -46,17 +61,44 @@ export default function SimpleCalculator() {
         }
         return false;
     }
-    function isCaracterValidInExpression(value:string):boolean{
-        if(
-            display.length===1 &&
+    function isCaracterValidInExpression(value: string): boolean {
+        if (
+            display.length === 1 &&
             display.charAt(0) === '0' &&
-            value==='0'
-            ){
-                return false;
+            value === '0'
+        ) {
+            return false;
+        }
+
+        if (
+            value === 'sup2'
+            && !isOperator(display[display.length - 1])
+            && display[display.length - 1] === '('
+        ) {
+            return false
+        }
+        if (
+            value === 'sup3'
+            && !isOperator(display[display.length - 1])
+            && display[display.length - 1] === '('
+            ) {
+            return false
         }
 
 
         return true;
+    }
+
+    function testExpGetResult(): boolean {
+        try {
+            const preResult = eval(display);
+            if (!isNaN(preResult)) {
+                return true
+            }
+        } catch (e) {
+            return false;
+        }
+        return false;
     }
     function setIntoExpression(value: string) {
 
@@ -77,16 +119,16 @@ export default function SimpleCalculator() {
                 } else {
                     setDisplayPreResult("Expressão inválida ...")
                 }
-            }else{
+            } else {
                 setDisplayPreResult("")
             }
         } catch (e) {
             if (e instanceof SyntaxError) {
                 setDisplayPreResult("Erro de sintaxe ...")
-            }else{
+            } else {
                 setDisplayPreResult("Expressão inválida ...")
             }
-            
+
         }
 
         setDisplay(nValue)
@@ -97,6 +139,8 @@ export default function SimpleCalculator() {
         switch (value) {
             case ',':
                 return '.';
+            case 'sup2':
+                return '**2';
         }
         return value;
     }
@@ -142,6 +186,45 @@ export default function SimpleCalculator() {
                 <View
                     style={Styles.keyArea}
                 >
+
+                    <TouchableOpacity
+                        style={[Styles.keyArea_1_4, Styles.keyNumbersDefault, Styles.keyBase]}
+                        onPress={() => onClickKey('(')}
+                    >
+                        <Text style={[Styles.textNumberDefault, Styles.textKey]}>
+                            (
+                        </Text>
+                    </TouchableOpacity>
+
+
+                    <TouchableOpacity
+                        style={[Styles.keyArea_1_4, Styles.keyNumbersDefault, Styles.keyBase]}
+                        onPress={() => onClickKey('sup2')}
+                    >
+                        <Text style={[Styles.textNumberDefault, Styles.textKey]}>
+                            x²
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[Styles.keyArea_1_4, Styles.keyNumbersDefault, Styles.keyBase]}
+                        onPress={() => onClickKey('sup3')}
+                    >
+                        <Text style={[Styles.textNumberDefault, Styles.textKey]}>
+                            x³
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[Styles.keyArea_1_4, Styles.keyNumbersDefault, Styles.keyBase]}
+                        onPress={() => onClickKey(')')}
+                    >
+                        <Text style={[Styles.textNumberDefault, Styles.textKey]}>
+                            )
+                        </Text>
+                    </TouchableOpacity>
+
+
                     <TouchableOpacity
                         style={[Styles.keyArea_1_4, Styles.keyNumbersDefault, Styles.keyBase]}
                         onPress={() => onClickKey('1')}
